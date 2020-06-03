@@ -1,6 +1,7 @@
 const url = require("url")
 const electron = require('electron')
 const path = require('path')
+const fs = require('fs')
 
 const {app, BrowserWindow, Menu, ipcMain} = electron;
 
@@ -60,6 +61,17 @@ function addItemWindow(){
 // catches add:item event and sends it to the main window
 ipcMain.on('add:item', (e, item) => {
     MainWindow.webContents.send('add:item', item)
+    let savePath = path.join(__dirname,"data")
+    fs.exists(savePath, (exists) => {
+        if(! exists){
+            fs.mkdir(savePath, {}, (err) => {
+                if(err) throw err;
+            })
+        };
+        fs.appendFile(path.join(savePath,"itemlist.json"), JSON.stringify(item) , (err) => {
+            if (err) throw err;
+        })
+    })
 })
 
 
