@@ -31,12 +31,14 @@
         <a href="#" class="brand-logo center">Shopping List</a>
     </nav>
     
-    <div class="container centered">
+    <table></table>
+
+    <div class="centered">
         Click the + button to add new Item
     </div>
 
-    <div class="container float">
-        <a id="add" class="btn-floating btn-large waves-effect waves-light teal z-depth-4"><i class="material-icons">add</i></a>
+    <div class="float">
+        <button onclick=addItems() id="add" class="btn-floating btn-large waves-effect waves-light teal z-depth-4"><i class="material-icons">add</i></button>
     </div>
     
 
@@ -48,9 +50,13 @@
 
        // list.addEventListener("dblclick", removeItem)
 
+        addbutton = document.querySelector('button');
+
         ipcRenderer.on('add:item', appendList);
         ipcRenderer.on('clear:item', clearItems);
 
+
+        const  addItems = (e) => ipcRenderer.send('add:page')
 
         function clearItems(e){
             list.innerHTML = ""
