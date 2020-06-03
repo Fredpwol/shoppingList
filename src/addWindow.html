@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="../css/materialize.min.css"  media="screen,projection"/>
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body>
+    <form>
+        <label>Add Item</label>
+        <input type="text" placeholder="enter an item"  id="item" autofocus >
+        <br>
+        <button type="submit" class="btn waves-effect waves-light" name="action">Submit</button>
+    </form>
+
+    <script>
+        const electron = require("electron");
+        const {ipcRenderer} = electron;
+
+        let form = document.querySelector('form');
+        form.addEventListener("submit", submitInput );
+
+        function submitInput(e){
+            e.preventDefault()
+            let item = document.querySelector('#item');
+            ipcRenderer.send('add:item', item.value)
+            item.value = ""
+
+        }
+    </script>
+    <script type="text/javascript" src="../js/materialize.min.js"></script>
+</body>
+</html>
