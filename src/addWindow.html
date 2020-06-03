@@ -11,10 +11,16 @@
 </head>
 <body>
     <form>
-        <label>Add Item</label>
-        <input type="text" placeholder="enter an item"  id="item" autofocus >
+        <label for="item">Enter Item</label>
+        <input type="text" placeholder="Enter an item"  id="item" name="item" autofocus >
         <br>
-        <button type="submit" class="btn waves-effect waves-light" name="action">Submit</button>
+        <label for="price">Enter Price</label>
+        <input type="number" placeholder="Enter a price"  id="price"  name="price">
+        <br>
+        <div class="container">
+            <button type="submit" class="btn waves-effect waves-light" name="action">Submit</button>
+        </div>
+        
     </form>
 
     <script>
@@ -27,8 +33,14 @@
         function submitInput(e){
             e.preventDefault()
             let item = document.querySelector('#item');
-            ipcRenderer.send('add:item', item.value)
+            let price = document.querySelector('#price');
+            let values = {
+                "item":item.value,
+                "price":price.value
+            }
+            ipcRenderer.send('add:item', values)
             item.value = ""
+            price.value = ""
 
         }
     </script>
