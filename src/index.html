@@ -8,20 +8,45 @@
     
           <!--Let browser know website is optimized for mobile-->
           <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+          <style>
+              .centered{
+                position: absolute;
+                top:50%;
+                left:50%;
+                margin-left:-110px;
+                margin-top:-20px;
+            }
+            .float{
+                position: absolute;
+                bottom:10%;
+                left:50%;
+                margin-left:-45px;
+                margin-top:50px;
+            }
+          </style>
 </head>
 <body>
-    <nav class="nav-wrapper">
+    <nav class="nav-wrapper teal">
         <a href="#" class="brand-logo center">Shopping List</a>
     </nav>
-    <ul id="list"> </ul>
+    
+    <div class="container centered">
+        Click the + button to add new Item
+    </div>
+
+    <div class="container float">
+        <a id="add" class="btn-floating btn-large waves-effect waves-light teal z-depth-4"><i class="material-icons">add</i></a>
+    </div>
+    
 
     <script>
         const electron = require('electron');
         const {ipcRenderer} = electron;
 
-        let list = document.querySelector('#list');
+        //let list = document.querySelector('#list');
 
-        list.addEventListener("dblclick", removeItem)
+       // list.addEventListener("dblclick", removeItem)
 
         ipcRenderer.on('add:item', appendList);
         ipcRenderer.on('clear:item', clearItems);
