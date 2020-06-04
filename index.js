@@ -7,6 +7,8 @@ const {app, BrowserWindow, Menu, ipcMain} = electron;
 
 let MainWindow;
 let addWindow;
+let savePath = path.join(__dirname,"data")
+let dataPath = path.join(savePath,"itemlist.json")
 
 app.on('ready', () => {
     MainWindow = new BrowserWindow({
@@ -62,9 +64,6 @@ ipcMain.on('add:page', () => addItemWindow())
 
 // catches add:item event and sends it to the main window
 ipcMain.on('add:item', (e, item) => {
-    MainWindow.webContents.send('add:item', item)
-    let savePath = path.join(__dirname,"data")
-    let dataPath = path.join(savePath,"itemlist.json")
     fs.exists(savePath, (exists) => {
         if(! exists){
             fs.mkdir(savePath, {}, (err) => {
@@ -85,18 +84,39 @@ ipcMain.on('add:item', (e, item) => {
                     let itemData;
                     fs.readFile(dataPath,'utf-8',(err, data) => {
                         if(err) throw err;
-                        itemData = JSON.parse(data)
-                        fs.writeFile(path.join(savePath,"itemlist.json"), JSON.stringify([...itemData, item]), (err) => {
+                        if(!data){
+                            fs.writeFile(dataPath, JSON.stringify([item]) , (err) => {
+                                if (err) throw err;
+                            })
+                        }
+                        else{
+                            itemData = JSON.parse(data)
+                            fs.writeFile(dataPath, JSON.stringify([...itemData, item]), (err) => {
                             if (err) throw err;
                         })
+                        }
+                        
                     })
                 }
             })
                  
         }
-        
+        MainWindow.webContents.send("add:item", item)
     })
-    MainWindow.webContents.send("add:item")
+    
+})
+
+ipcMain.on('delete:item', (e,index) => {
+    console.log(index)
+    let itemData;
+    fs.readFile(dataPath, 'utf-8', (err, data) => {
+        if(err) throw err;
+        itemData = JSON.parse(data)
+        itemData = itemData.filter((value, i) => i != index)
+        fs.writeFile(dataPath, JSON.stringify(itemData),(err) =>{
+            if(err) throw err;
+        })
+    })
 })
 
 

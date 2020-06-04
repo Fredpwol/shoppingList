@@ -54,26 +54,30 @@
         const fs = require("fs");
         const path = require('path')
 
+        let placeholder = document.querySelector('#placeholder');
         let thead = document.querySelector('thead');
         let tbody = document.querySelector('tbody');
         let addbutton = document.querySelector('button');
 
-        ipcRenderer.on('add:item',main);
+
+        
+        ipcRenderer.on('add:item',appendList);
+        
         ipcRenderer.on('clear:item', clearItems);
 
         let dataPath = "./data/itemlist.json"
         const  addItems = (e) => ipcRenderer.send('add:page')
 
         main();
-
         function main(){
             fs.readFile(dataPath,'utf-8', (err, data) =>{
                 if(err) throw err;
-                data = JSON.parse(data)
-                if (data.length >= 1){
+                if (data){
+                    placeholder.innerHTML = ""
+                    data = JSON.parse(data)
                     if (thead.children.length <= 0){
                         let tr = document.createElement('tr');
-                        ["Items", "Prices($)"].forEach((value,i) => {
+                        ["Items", "Prices ($)"].forEach((value,i) => {
                             let text = document.createTextNode(value)
                             let th   = document.createElement('th')
                             th.appendChild(text)
@@ -83,6 +87,7 @@
                     }
     
                     let currItem;
+                    tbody.innerHTML =""
                     for (var i = 0; i < data.length; i++){
                         currItem = data[i]
                         let tr = document.createElement('tr');
@@ -98,17 +103,23 @@
                     }
                 }
                 else{
-                    let placeholder = document.querySelector('#placeholder');
                     placeholder.appendChild(document.createTextNode("Click the + button to add new item."))
                 }
+                td = null, tr=null, th=null
                 
             })
         }
 
 
         function removeItem(e){
-            console.log(e)
-            e.path[1].remove()
+            let index;
+            row = e.path[1]
+            let allRows = document.querySelectorAll('tr');
+            allRows.forEach((value, i) =>{
+                if(value == row) index = i
+            })
+            row.remove()
+            ipcRenderer.send('delete:item', index-1)
         }
 
         function clearItems(e){
@@ -117,8 +128,30 @@
         }
 
         function appendList(e, item){
-           
+            if (thead.children.length <= 0){
+                let tr = document.createElement('tr');
+                ["Items", "Prices ($)"].forEach((value,i) => {
+                    let text = document.createTextNode(value)
+                    let th   = document.createElement('th')
+                    th.appendChild(text)
+                    tr.appendChild(th)
+                })
+                thead.appendChild(tr)
+            }
+
+            let tr = document.createElement('tr');
+            let text, td;
+            let value = ["item", "price"];
+            for(var i = 0; i < 2; i++){
+                text = document.createTextNode(item[value[i]])
+                td   = document.createElement('td')
+                td.appendChild(text)
+                tr.appendChild(td)
+            }
+            tr.addEventListener('dblclick', removeItem)
+            tbody.appendChild(tr)
         }
+
 
     </script>
     <script type="text/javascript" src="../js/materialize.min.js"></script>
