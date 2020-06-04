@@ -18,10 +18,10 @@
                 margin-top:-20px;
             }
             .float{
-                position: absolute;
+                position: fixed;
                 bottom:10%;
-                left:50%;
-                margin-left:-45px;
+                right:10%;
+                margin-right:15px;
                 margin-top:50px;
             }
           </style>
@@ -31,10 +31,16 @@
         <a href="#" class="brand-logo center">Shopping List</a>
     </nav>
     
-    <table></table>
+    <div class="container">
+        <table class="highlight">
+            <thead>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 
-    <div class="centered">
-        Click the + button to add new Item
+    <div class="centered" id="placeholder">
     </div>
 
     <div class="float">
@@ -45,43 +51,73 @@
     <script>
         const electron = require('electron');
         const {ipcRenderer} = electron;
+        const fs = require("fs");
+        const path = require('path')
 
-        //let list = document.querySelector('#list');
+        let thead = document.querySelector('thead');
+        let tbody = document.querySelector('tbody');
+        let addbutton = document.querySelector('button');
 
-       // list.addEventListener("dblclick", removeItem)
-
-        addbutton = document.querySelector('button');
-
-        ipcRenderer.on('add:item', appendList);
+        ipcRenderer.on('add:item',main);
         ipcRenderer.on('clear:item', clearItems);
 
-
+        let dataPath = "./data/itemlist.json"
         const  addItems = (e) => ipcRenderer.send('add:page')
+
+        main();
+
+        function main(){
+            fs.readFile(dataPath,'utf-8', (err, data) =>{
+                if(err) throw err;
+                data = JSON.parse(data)
+                if (data.length >= 1){
+                    if (thead.children.length <= 0){
+                        let tr = document.createElement('tr');
+                        ["Items", "Prices($)"].forEach((value,i) => {
+                            let text = document.createTextNode(value)
+                            let th   = document.createElement('th')
+                            th.appendChild(text)
+                            tr.appendChild(th)
+                        })
+                        thead.appendChild(tr)
+                    }
+    
+                    let currItem;
+                    for (var i = 0; i < data.length; i++){
+                        currItem = data[i]
+                        let tr = document.createElement('tr');
+                        
+                        ["item", "price"].forEach((value,i) => {
+                            let text = document.createTextNode(currItem[value])
+                            let td   = document.createElement('td')
+                            td.appendChild(text)
+                            tr.appendChild(td)
+                        })
+                        tr.addEventListener('dblclick', removeItem)
+                        tbody.appendChild(tr)
+                    }
+                }
+                else{
+                    let placeholder = document.querySelector('#placeholder');
+                    placeholder.appendChild(document.createTextNode("Click the + button to add new item."))
+                }
+                
+            })
+        }
+
+
+        function removeItem(e){
+            console.log(e)
+            e.path[1].remove()
+        }
 
         function clearItems(e){
             list.innerHTML = ""
             list.className = ""
         }
 
-
-        function removeItem(e){
-            e.target.remove()
-            if (list.children.length == 0){
-                list.className = ""
-            }
-        }
-
         function appendList(e, item){
-            if(list.children.length <= 0){
-                list.className = "collection"
-            }
-
-            let li = document.createElement("li");
-            let text = document.createTextNode(item)
-
-            li.appendChild(text)
-            li.className = "collection-item";
-            list.appendChild(li)
+           
         }
 
     </script>

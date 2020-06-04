@@ -96,6 +96,7 @@ ipcMain.on('add:item', (e, item) => {
         }
         
     })
+    MainWindow.webContents.send("add:item")
 })
 
 

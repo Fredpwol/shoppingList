@@ -2,5 +2,25 @@
     {
         "item": "egg",
         "price": "2"
+    },
+    {
+        "item": "bread",
+        "price": "13"
+    },
+    {
+        "item": "sugar",
+        "price": "12"
+    },
+    {
+        "item": "chickhen",
+        "price": "23"
+    },
+    {
+        "item": "fro",
+        "price": "1"
+    },
+    {
+        "item": "qa",
+        "price": "12"
     }
 ]
