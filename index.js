@@ -120,6 +120,13 @@ ipcMain.on('delete:item', (e,index) => {
 })
 
 
+ipcMain.on('clear:item', (e) => {
+    fs.writeFile(dataPath, "",(err) =>{
+        if(err) throw err;
+    })
+})
+
+
 let MenuTemplate = [
     {
         label:'File',

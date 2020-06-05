@@ -39,6 +39,7 @@
             </tbody>
         </table>
     </div>
+    <div id="total" style="width: 100%; align-content:center; " >hello</div>
 
     <div class="centered" id="placeholder">
     </div>
@@ -123,12 +124,15 @@
         }
 
         function clearItems(e){
-            list.innerHTML = ""
-            list.className = ""
+            thead.innerHTML = ""
+            tbody.innerHTML = ""
+            ipcRenderer.send('clear:item')
+            placeholder.appendChild(document.createTextNode("Click the + button to add new item."))
         }
 
         function appendList(e, item){
             if (thead.children.length <= 0){
+                placeholder.innerHTML = ""
                 let tr = document.createElement('tr');
                 ["Items", "Prices ($)"].forEach((value,i) => {
                     let text = document.createTextNode(value)
