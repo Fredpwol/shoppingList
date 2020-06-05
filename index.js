@@ -107,7 +107,6 @@ ipcMain.on('add:item', (e, item) => {
 })
 
 ipcMain.on('delete:item', (e,index) => {
-    console.log(index)
     let itemData;
     fs.readFile(dataPath, 'utf-8', (err, data) => {
         if(err) throw err;

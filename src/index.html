@@ -38,8 +38,9 @@
             <tbody>
             </tbody>
         </table>
+        <div style="padding-left:35%;" ><h5 id="total"></h5></div>
     </div>
-    <div id="total" style="width: 100%; align-content:center; " >hello</div>
+    
 
     <div class="centered" id="placeholder">
     </div>
@@ -59,13 +60,16 @@
         let thead = document.querySelector('thead');
         let tbody = document.querySelector('tbody');
         let addbutton = document.querySelector('button');
-
+        let total = document.querySelector('#total');
+        
 
         
         ipcRenderer.on('add:item',appendList);
         
         ipcRenderer.on('clear:item', clearItems);
 
+        let totalSum = 0;
+        let totalValue = `Total :    $ ${totalSum}`;
         let dataPath = "./data/itemlist.json"
         const  addItems = (e) => ipcRenderer.send('add:page')
 
@@ -94,6 +98,9 @@
                         let tr = document.createElement('tr');
                         
                         ["item", "price"].forEach((value,i) => {
+                            if(value == "price"){
+                                totalSum += new Number(currItem[value])
+                            }
                             let text = document.createTextNode(currItem[value])
                             let td   = document.createElement('td')
                             td.appendChild(text)
@@ -102,6 +109,7 @@
                         tr.addEventListener('dblclick', removeItem)
                         tbody.appendChild(tr)
                     }
+                    total.innerText =  `Total :    $ ${totalSum}`;
                 }
                 else{
                     placeholder.appendChild(document.createTextNode("Click the + button to add new item."))
@@ -115,12 +123,16 @@
         function removeItem(e){
             let index;
             row = e.path[1]
+            let price  = row.children[1].innerText
+            console.log(price)
+            totalSum -= new Number(price);
             let allRows = document.querySelectorAll('tr');
             allRows.forEach((value, i) =>{
                 if(value == row) index = i
             })
             row.remove()
             ipcRenderer.send('delete:item', index-1)
+            total.innerText =  `Total :    $ ${totalSum}`;
         }
 
         function clearItems(e){
@@ -128,6 +140,7 @@
             tbody.innerHTML = ""
             ipcRenderer.send('clear:item')
             placeholder.appendChild(document.createTextNode("Click the + button to add new item."))
+            total.innerText = ""
         }
 
         function appendList(e, item){
@@ -147,15 +160,18 @@
             let text, td;
             let value = ["item", "price"];
             for(var i = 0; i < 2; i++){
+                if(i == 1){
+                    totalSum += new Number(item[value[i]]) ;
+                }
                 text = document.createTextNode(item[value[i]])
                 td   = document.createElement('td')
                 td.appendChild(text)
                 tr.appendChild(td)
             }
+            total.innerText =  `Total :    $ ${totalSum}`;
             tr.addEventListener('dblclick', removeItem)
             tbody.appendChild(tr)
         }
-
 
     </script>
     <script type="text/javascript" src="../js/materialize.min.js"></script>
