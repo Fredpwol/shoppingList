@@ -7,7 +7,7 @@ const {app, BrowserWindow, Menu, ipcMain} = electron;
 
 let MainWindow;
 let addWindow;
-let savePath = path.join(__dirname,"data")
+let savePath = path.join(__dirname,"store")
 let dataPath = path.join(savePath,"itemlist.json")
 
 app.on('ready', () => {
