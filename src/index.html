@@ -136,6 +136,7 @@
         }
 
         function clearItems(e){
+            totalSum = 0
             thead.innerHTML = ""
             tbody.innerHTML = ""
             ipcRenderer.send('clear:item')
